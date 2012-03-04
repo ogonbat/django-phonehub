@@ -41,35 +41,54 @@ class AastraIPPhoneTextMenu():
             for i in item.getItems():
                 self.xmlRoot_Content += i
         else:
-            raise TypeError, "Item not a MenuItem Instance "
+            raise TypeError, "Item not a MenuItem class Instance "
     def addIconList(self,icon):
         if isinstance(icon, IconList):
             for i in icon.getIcons():
                 self.xmlRoot_Content += i
         else:
-            raise TypeError, "Icon not a IconList Instance "
+            raise TypeError, "Icon not a IconList class Instance "
+    def addSoftKeys(self,softkey_item):
+        if isinstance(softkey_item, SoftKey):
+            for i in softkey_item.getSoftKey():
+                self.xmlRoot_Content += i
+        else:
+            raise TypeError, "SoftKey Item not a SoftKey class Instance "
     def render(self):
         self.xmlRoot += self.xmlRoot_Content
         self.xmlRoot += '</%s>' % (self.root_name)
         return self.xmlRoot
-    
+
+class SoftKey():
+    _softkey_list = []
+    _content = ''
+    def addSoftKey(self,soft_key_item,label,URI,index=None,icon_index=None):
+        self._content = '<SoftKey'
+        if index != None:
+            self._content += ' index="%s"'%(index)
+        if icon_index != None:
+            self._content += ' icon="%s"'%(icon_index)
+        self._content += '>'
+        self._content += '<Label>%s</Label>'%(label)
+        self._content += '<URI>%s</URI>'%(URI)
+        self._content += '</SoftKey>'
+        self._softkey_list.append(self._content)
+    def getSoftKey(self):
+        for i in self._softkey_list:
+            yield i
+
 class IconList():
     _icons_list = []
+    _content = ''
     def addIcon(self,iconName,index=None):
-        icon = Icon(iconName,index)
-        self._icons_list.append(icon)
-    def getIcons(self):
-        for i in self._icons_list:
-            yield i
-            
-class Icon():
-    _content=""
-    def __init__(self,iconName,index=None):
-        self._content += '<Icon'
+        self._content = '<Icon'
         if index != None:
             self._content += ' index="%s"'%(index)
         self._content += '>%s</Icon>'%(iconName)
-        return self._content
+        self._icons_list.append(self._content)
+    def getIcons(self):
+        for i in self._icons_list:
+            yield i
     
 class MenuItem():
     _items_list = []
