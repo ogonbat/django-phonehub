@@ -3,66 +3,154 @@ Created on 01/03/2012
 
 @author: ogonbat
 '''
-class AastraIPPhoneTextMenu():
-    root_name = "AastraIPPhoneTextMenu"
-    xmlRoot = ""
-    xmlRoot_Content = ""
-    def __init__(self, defaultIndex = None, destroyOnExit = "no", style = "numbered", Beep="no", Timeout = None, LockIn = "no", 
-                 allowAnswer="no", allowDrop="no", allowXfer="no", allowConf="no", cancelAction=None, wrapList="no", scrollConstrain="no", 
-                 unitScroll="no",scrollUp=None, scrollDown=None, numberLaunch="no"):
-        self.xmlRoot = '<%s' % (self.root_name)
-        if defaultIndex != None:
-            self.xmlRoot += ' defaultIndex="%s"' % (defaultIndex)
-        self.xmlRoot += ' destroyOnExit="%s"' % (destroyOnExit)
-        self.xmlRoot += ' style="%s"' % (style)
-        self.xmlRoot += ' Beep="%s"' % (Beep)
-        if Timeout != None:
-            self.xmlRoot += ' Timeout="%s"' % (Timeout)
-        self.xmlRoot += ' LockIn="%s"' % (LockIn)
-        self.xmlRoot += ' allowAnswer="%s"' % (allowAnswer)
-        self.xmlRoot += ' allowDrop="%s"' % (allowDrop)
-        self.xmlRoot += ' allowXfer="%s"' % (allowXfer)
-        self.xmlRoot += ' allowConf="%s"' % (allowConf)
-        if cancelAction != None:
-            self.xmlRoot += ' cancelAction="%s"' % (cancelAction)
-        self.xmlRoot += ' wrapList="%s"' % (wrapList)
-        self.xmlRoot += ' scrollConstrain="%s"' % (scrollConstrain)
-        self.xmlRoot += ' unitScroll="%s"' % (unitScroll)
-        if scrollUp != None:
-            self.xmlRoot += ' scrollUp="%s"' % (scrollUp)
-        if scrollDown != None:
-            self.xmlRoot += ' scrollDown="%s"' % (scrollDown)
-        self.xmlRoot += ' numberLaunch="%s"' % (numberLaunch)
-        self.xmlRoot = '>'
-    def addTitle(self,text="",wrap="no"):
-        self.xmlRoot_Content += '<Title wrap="%s">%s</Title>' % (wrap,text)
-    def addMenuItem(self,item):
-        if isinstance(item, MenuItem):
-            for i in item.getItems():
-                self.xmlRoot_Content += i
-        else:
-            raise TypeError, "Item not a MenuItem class Instance "
-    def addIconList(self,icon):
-        if isinstance(icon, IconList):
-            for i in icon.getIcons():
-                self.xmlRoot_Content += i
-        else:
-            raise TypeError, "Icon not a IconList class Instance "
+class AastraIPPhoneBase():
+    root_name = None
+    _content = ''
+    _list_root_options =[]
+    
+    def setDefaultIndex(self,val):
+        self._list_root_options.append(' defaultIndex="%s"' % (val))
+        
+    def setDestroyOnExit(self,val):
+        self._list_root_options.append(' destroyOnExit="%s"'%(val))
+    
+    def setStyle(self,val):
+        self._list_root_options.append(' style="%s"' % (val))
+        
+    def setBeep(self,val):
+        self._list_root_options.append(' Beep="%s"' % (val))
+   
+    def setTimeout(self,val):
+        self._list_root_options.append(' Timeout="%s"' % (val))
+    
+    def setLockIn(self,val):
+        self._list_root_options.append(' LockIn="%s"' % (val))
+    
+    def setAllowAnswer(self,val):
+        self._list_root_options.append(' allowAnswer="%s"' % (val))
+    
+    def setAllowDrop(self,val):
+        self._list_root_options.append(' allowDrop="%s"' % (val))
+    
+    def setAllowXfer(self,val):
+        self._list_root_options.append(' allowXfer="%s"' % (val))
+    
+    def setAllowConf(self,val):
+        self._list_root_options.append(' allowConf="%s"' % (val))
+    
+    def setCancelAction(self,val):
+        self._list_root_options.append(' cancelAction="%s"' % (val))
+    
+    def setWrapList(self,val):
+        self._list_root_options.append(' wrapList="%s"' % (val))
+    
+    def setScrollConstrain(self,val):
+        self._list_root_options.append(' scrollConstrain="%s"' % (val))
+    
+    def setUnitScroll(self,val):
+        self._list_root_options.append(' unitScroll="%s"' % (val))
+    
+    def setScrollUp(self,val):
+        self._list_root_options.append(' scrollUp="%s"' % (val))
+    
+    def setScrollDown(self,val):
+        self._list_root_options.append(' scrollDown="%s"' % (val))
+    
+    def setNumberLaunch(self,val):
+        self._list_root_options.append(' numberLaunch="%s"' % (val))
+    
+    def setDoneAction(self,val):
+        self._list_root_options.append(' doneAction="%s"' % (val))
+    
+    
+    
+    def content(self):
+        return self._content
+    
     def addSoftKeys(self,softkey_item):
         if isinstance(softkey_item, SoftKey):
             for i in softkey_item.getSoftKey():
-                self.xmlRoot_Content += i
+                self._content += i
         else:
             raise TypeError, "SoftKey Item not a SoftKey class Instance "
-    def render(self):
-        self.xmlRoot += self.xmlRoot_Content
-        self.xmlRoot += '</%s>' % (self.root_name)
-        return self.xmlRoot
+    def addIconList(self,icon):
+        if isinstance(icon, IconList):
+            self._content += '<IconList>'
+            for i in icon.getIcons():
+                self._content += i
+            self._content += '</IconList>'
+        else:
+            raise TypeError, "Icon not a IconList class Instance"
+    
+    def getXMLRender(self):
+        self._xmlRoot = '<%s' % (self.root_name)
+        for option in self._list_root_options:
+            self._xmlRoot += option
+        self._xmlRoot += '>'
+        self._xmlRoot += self._content
+        self._xmlRoot += '</%s>' % (self.root_name)
+        return self._xmlRoot
+    
+class AastraIPPhoneTextMenu(AastraIPPhoneBase):
+    def __init__(self):
+        self.root_name = "AastraIPPhoneTextMenu"
+    def addTitle(self,text="",wrap="no"):
+        self._content += '<Title wrap="%s">%s</Title>' % (wrap,text)
+    def addMenuItem(self,item):
+        if isinstance(item, MenuItem):
+            for i in item.getItems():
+                self._content += i
+        else:
+            raise TypeError, "Item not a MenuItem class Instance"
+        
+class AastraIPPhoneImageMenu(AastraIPPhoneBase):
+    def __init__(self):
+        self.root_name = "AastraIPPhoneImageMenu"
+    def setImageAction(self,val):
+        self._list_root_options.append(' imageAction="%s"' % (val))
+    def setMode(self,val):
+        self._list_root_options.append(' mode="%s"' % (val))
+    def addImage(self,content,height,width,verticalAlign='middle',horizontalAlign='middle'):
+        self._content += '<Image'
+        self._content += ' verticalAlign="%s" horizontalAlign="%s" height="%s" width="%s">'
+        self._content += content
+        self._content += '</Image>'
+    def addURLList(self,URIlist):
+        if isinstance(URIlist, URIList):
+            self._content += '<URIList%s'%(URIlist.getBase())
+            self._content += '>'
+            for i in URIlist.getItems():
+                self._content += i
+            self._content += '</URIList>'
+        else:
+            raise TypeError, "URI List not a URIList class Instance"
 
+class URIList():
+    _items_list = []
+    _base = ''
+    def __init__(self,base=None):
+        self._base = base
+    def addItem(self,Prompt,key,base=None):
+        content = '<URI key="%s">%s</URI>' % (Prompt,key)
+        self._items_list.append(content)
+    def getBase(self):
+        if self._base != None:
+            return ' base="%s"'%(self._base)
+        else:
+            return ''
+    def getItems(self):
+        for item in self._items_list:
+            yield item
+            
+class _UrlItem():
+    def __init__(self,Prompt,key):
+        self._content = '<URI key="%s">%s</URI>' % (Prompt,key)
+    def getContent(self):
+        return self._content
+    
 class SoftKey():
     _softkey_list = []
-    _content = ''
-    def addSoftKey(self,soft_key_item,label,URI,index=None,icon_index=None):
+    def addSoftKey(self,label,URI,index=None,icon_index=None):
         self._content = '<SoftKey'
         if index != None:
             self._content += ' index="%s"'%(index)
@@ -79,7 +167,6 @@ class SoftKey():
 
 class IconList():
     _icons_list = []
-    _content = ''
     def addIcon(self,iconName,index=None):
         self._content = '<Icon'
         if index != None:
@@ -93,21 +180,20 @@ class IconList():
 class MenuItem():
     _items_list = []
     def addItem(self,Prompt,URI,base=None,icon=None,Dial=None,Selection=None):
-        item = _Item(Prompt,URI,base,icon,Dial,Selection)
+        item = _Item(Prompt,URI,Dial,Selection)
         content = ''
         content += '<MenuItem'
         if base != None:
             content += ' base="%s"' % ( base )
         if icon != None:
             content += ' icon="%s"' % ( icon )
-        content += '>%s</MenuItem>'%(item)
+        content += '>%s</MenuItem>'%(item.getContent())
         self._items_list.append(content)
     def getItems(self):
         for item in self._items_list:
             yield item
             
 class _Item():
-    _content = ''
     def __init__(self,Prompt,URI,Dial=None,Selection=None):
         self._content = '<Prompt>%s</Prompt>' % (Prompt)
         self._content += '<URI>%s</URI>' % (URI)
@@ -118,5 +204,6 @@ class _Item():
                 self._content += '<Dial>%s</Dial>' % (Dial)
         if Selection != None:
             self._content += '<Selection>%s</Selection>' % ( Selection)
+    def getContent(self):
         return self._content
                 
