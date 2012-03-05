@@ -3,6 +3,8 @@ Created on 01/03/2012
 
 @author: ogonbat
 '''
+from django_phonehub.aastra.items import ExecuteItem, MessageItem, inputItem,\
+    LineItem, URIItem, MenuItem, IconItem, SoftKeyItem, ConfigurationItem
 class AastraIPPhoneBase():
     
     root_name = None
@@ -75,16 +77,16 @@ class AastraIPPhoneBase():
     def content(self):
         return self._content
     
-    def addSoftKeys(self,softkey_item):
-        if isinstance(softkey_item, SoftKey):
-            for i in softkey_item.getSoftKey():
+    def addSoftKeysItems(self,softkey_item):
+        if isinstance(softkey_item, SoftKeyItem):
+            for i in softkey_item.getItem():
                 self._content += i
         else:
             raise TypeError, "SoftKey Item not a SoftKey() class Instance"
-    def addIconList(self,icon):
-        if isinstance(icon, IconList):
+    def addIconListItems(self,icon):
+        if isinstance(icon, IconItem):
             self._content += '<IconList>'
-            for i in icon.getIcons():
+            for i in icon.getItem():
                 self._content += i
             self._content += '</IconList>'
         else:
@@ -107,9 +109,9 @@ class AastraIPPhoneTextMenu(AastraIPPhoneBase):
     def addTitle(self,text,wrap="no"):
         self._content += '<Title wrap="%s">%s</Title>' % (wrap,text)
         
-    def addMenuItem(self,item):
+    def addMenuItems(self,item):
         if isinstance(item, MenuItem):
-            for i in item.getItems():
+            for i in item.getItem():
                 self._content += i
         else:
             raise TypeError, "Item not a MenuItem() class Instance"
@@ -124,7 +126,7 @@ class AastraIPPhoneImageScreen(AastraIPPhoneBase):
     def setMode(self,val):
         self._list_root_options.append(' mode="%s"' % (val))
         
-    def addImage(self,content,height,width,verticalAlign='middle',horizontalAlign='middle'):
+    def addImageItem(self,content,height,width,verticalAlign='middle',horizontalAlign='middle'):
         self._content += '<Image'
         self._content += ' verticalAlign="%s" horizontalAlign="%s" height="%s" width="%s">'
         self._content += content
@@ -134,11 +136,11 @@ class AastraIPPhoneImageMenu(AastraIPPhoneImageScreen):
     def __init__(self):
         self.root_name = "AastraIPPhoneImageMenu"
         
-    def addURLList(self,URIlist):
-        if isinstance(URIlist, URIList):
+    def addURLListItem(self,URIlist):
+        if isinstance(URIlist, URIItem):
             self._content += '<URIList%s'%(URIlist.getBase())
             self._content += '>'
-            for i in URIlist.getItems():
+            for i in URIlist.getItem():
                 self._content += i
             self._content += '</URIList>'
         else:
@@ -160,20 +162,20 @@ class AastraIPPhoneFormattedScreen(AastraIPPhoneBase):
     def __init__(self):
         self.root_name = "AastraIPPhoneFormattedScreen"
         
-    def addLine(self,line):
-        if isinstance(line,Line):
-            for i in line.getLine():
+    def addLineItems(self,line):
+        if isinstance(line,LineItem):
+            for i in line.getItem():
                 self._content += i
         else:
             raise TypeError, "line not a Line() class Instance"
         
-    def addScrollLine(self,line,height=None): 
-        if isinstance(line,Line):
+    def addScrollLineItems(self,line,height=None): 
+        if isinstance(line,LineItem):
             self._content += '<Scroll'
             if height != None:
                 self._content += ' Height="%s"'%(height)
             self._content += '>'
-            for i in line.getLine():
+            for i in line.getItem():
                 self._content += i
             self._content += '</Scroll>'
         else:
@@ -193,7 +195,7 @@ class AastraIPPhoneInputScreen(AastraIPPhoneBase):
         if is_password != False:
             self._list_root_options.append(' password="yes"')
             
-    def addInput(self,prompt,URL,parameter,default,title=None,title_wrap="no"):
+    def addInputItem(self,prompt,URL,parameter,default,title=None,title_wrap="no"):
         if title != None:
             self._content += '<Title'
             if title_wrap != "no":
@@ -222,18 +224,20 @@ class AastraIPPhoneMultiInputScreen(AastraIPPhoneBase):
         if is_password != False:
             self._list_root_options.append(' password="yes"')
     
-    def addInput(self,inputItem):
-        if isinstance(inputItem, inputItem):
-            for i in inputItem.getInput():
+    def addInputItems(self,item):
+        if isinstance(item, inputItem):
+            for i in inputItem.getItem():
                 self._content += i
 
 class AastraIPPhoneStatus(AastraIPPhoneBase):
     def __init__(self):
         self.root_name = "AastraIPPhoneStatus"
+        
     def setTriggerDestroyOnExit(self,val="no"):
         if val != "no":
             self._list_root_options.append(' triggerDestroyOnExit="yes"')
-    def addMessage(self,messageItem,Session=None):
+            
+    def addMessageItems(self,messageItem,Session=None):
         if Session != None:
             self._content = '<Session>%s</Session>'%(Session)
         if isinstance(messageItem,MessageItem):
@@ -242,175 +246,37 @@ class AastraIPPhoneStatus(AastraIPPhoneBase):
         else:
             raise TypeError, "Item Message Variable not a MessageItem() class Instance"
 
-class MessageItem():
-    _message_list = []
-    def addMessage(self,text,index,typeAlert=None,Timeout="45",URI=None):
-        content = ""
-        content += '<Message'
-        content += ' Index="%s"'%(index)
-        if typeAlert != None:
-            content += ' Type="%s"'%(typeAlert)
-        if Timeout != "45":
-            content += ' Timeout="%s"'%(Timeout)
-        if URI != None:
-            content += ' URI="%s"'%(URI)
-        content += '>%s</Message>'%(text)
-        self._message_list.append(content)
-    def getItem(self):
-        for i in self._message_list:
-            yield i     
-class inputItem():
+class AastraIPPhoneExecute(AastraIPPhoneBase):
     
-    _input_list = []
+    def __init__(self):
+        self.root_name = "AastraIPPhoneExecute"
+        
+    def setTriggerDestroyOnExit(self,val="no"):
+        if val != "no":
+            self._list_root_options.append(' triggerDestroyOnExit="yes"')
     
-    def addInput(self,prompt=None,parameter=None,default=None,selection=None,typeMode="string",is_password="no",editable="yes",softkey=None):
-        content = ""
-        content += '<InputField'
-        if typeMode != "string":
-            content += ' type="%s"'%(typeMode)
+    def addExecuteItems(self,item):
+        if isinstance(item, ExecuteItem):
+            for i in item.getItem():
+                self._content += i
         else:
-            if is_password != "no":
-                content += ' password="yes"'
-        if editable != "yes":
-            content += ' editable="no"'
-        content += '>'
-        if prompt != None:
-            content += '<Prompt>%s</Prompt>'%(prompt)
-        if parameter != None:
-            content += '<Parameter>%s</Parameter>'%(parameter)
-        if default != None:
-            content += '<Default>%s</Default>'%(default)
-        if selection != None:
-            content += '<Selection>%s</Selection>'%(selection)
-        if softkey != None:
-            if isinstance(softkey,SoftKey):
-                for i in softkey.getSoftKey():
-                    content += i
-            else:
-                raise TypeError, "SoftKey Item not a SoftKey() class Instance"
-        content += '</InputField> '
-        self._input_list.append(content) 
-    def getInput(self):
-        for i in self._input_list:
-            yield i
-            
+            raise TypeError, "Item Execute Variable not a ExecuteItem() class Instance"
 
+class AastraIPPhoneConfiguration(AastraIPPhoneBase):
+    def __init__(self):
+        self.root_name = "AastraIPPhoneConfiguration"
+        
+    def setTriggerDestroyOnExit(self,val="no"):
+        if val != "no":
+            self._list_root_options.append(' triggerDestroyOnExit="yes"')
             
-class URIList():
-    _items_list = []
-    _base = ''
-    def __init__(self,base=None):
-        self._base = base
-        
-    def addItem(self,Prompt,key,base=None):
-        content = '<URI key="%s">%s</URI>' % (Prompt,key)
-        self._items_list.append(content)
-        
-    def getBase(self):
-        if self._base != None:
-            return ' base="%s"'%(self._base)
+    def setType(self,val="remote"):
+        if val != "remote":
+            self._list_root_options.append(' setType="%s"' % (val))
+    
+    def addConfigurationItems(self,item):
+        if isinstance(item, ConfigurationItem):
+            for i in item.getItem():
+                self._content += i
         else:
-            return ''
-        
-    def getItems(self):
-        for item in self._items_list:
-            yield item
-            
-class _UrlItem():
-    def __init__(self,Prompt,key):
-        self._content = '<URI key="%s">%s</URI>' % (Prompt,key)
-        
-    def getContent(self):
-        return self._content
-    
-class Line():
-    
-    _line_list = []
-    
-    def addLine(self,text,Size="normal",Align="left",Color="white"):
-        self._content = '<Line'
-        if Size != "normal":
-            self._content += ' Size="%s"'%(Size)
-        if Align != "left":
-            self._content += ' Align="%s"'%(Align)
-        if Color != "white":
-            self._content += ' Color="%s"'%(Color)
-        self._content += '>'
-        self._content += '%s'%(text)
-        self._content += '</Line>'
-        self._line_list.append(self._content)
-        
-    def getLine(self):
-        for i in self._line_list:
-            yield i
-            
-class SoftKey():
-    
-    _softkey_list = []
-    
-    def addSoftKey(self,label,URI,index=None,icon_index=None):
-        self._content = '<SoftKey'
-        if index != None:
-            self._content += ' index="%s"'%(index)
-        if icon_index != None:
-            self._content += ' icon="%s"'%(icon_index)
-        self._content += '>'
-        self._content += '<Label>%s</Label>'%(label)
-        self._content += '<URI>%s</URI>'%(URI)
-        self._content += '</SoftKey>'
-        self._softkey_list.append(self._content)
-        
-    def getSoftKey(self):
-        for i in self._softkey_list:
-            yield i
-
-class IconList():
-    
-    _icons_list = []
-    
-    def addIcon(self,iconName,index=None):
-        self._content = '<Icon'
-        if index != None:
-            self._content += ' index="%s"'%(index)
-        self._content += '>%s</Icon>'%(iconName)
-        self._icons_list.append(self._content)
-        
-    def getIcons(self):
-        for i in self._icons_list:
-            yield i
-    
-class MenuItem():
-    
-    _items_list = []
-    
-    def addItem(self,Prompt,URI,base=None,icon=None,Dial=None,Selection=None):
-        item = _Item(Prompt,URI,Dial,Selection)
-        content = ''
-        content += '<MenuItem'
-        if base != None:
-            content += ' base="%s"' % ( base )
-        if icon != None:
-            content += ' icon="%s"' % ( icon )
-        content += '>%s</MenuItem>'%(item.getContent())
-        self._items_list.append(content)
-        
-    def getItems(self):
-        for item in self._items_list:
-            yield item
-            
-class _Item():
-    
-    def __init__(self,Prompt,URI,Dial=None,Selection=None):
-        self._content = '<Prompt>%s</Prompt>' % (Prompt)
-        self._content += '<URI>%s</URI>' % (URI)
-        if Dial != None:
-            if type(Dial) is dict and all(k in Dial for k in ("line","content")):
-                self._content +=  '<Dial line="%s">%s</Dial>' % (Dial['line'],Dial['content'])
-            else:
-                self._content += '<Dial>%s</Dial>' % (Dial)
-        if Selection != None:
-            self._content += '<Selection>%s</Selection>' % ( Selection)
-            
-    def getContent(self):
-        return self._content
-                
+            raise TypeError, "Item Configuration Variable not a ConfigurationItem() class Instance"
