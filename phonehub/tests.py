@@ -4,7 +4,8 @@ Created on 04/03/2012
 @author: ogonbat
 '''
 import unittest
-from django_phonehub.aastra.api import AastraIPPhoneTextMenu, MenuItem, SoftKey
+from django_phonehub.aastra.api import AastraIPPhoneTextMenu, MenuItem 
+from django_phonehub.aastra.items import SoftKeyItem
 class PhoneHubTestCase(unittest.TestCase):
     def setUp(self):
         self.textmenu = AastraIPPhoneTextMenu()
@@ -15,13 +16,13 @@ class PhoneHubTestCase(unittest.TestCase):
         menuItem = MenuItem()
         menuItem.addItem("Prompt First Item","http://www.google.com")
         menuItem.addItem("Prompt Second Item","http://www.yahoo.com")
-        self.textmenu.addMenuItem(menuItem)
+        self.textmenu.addMenuItems(menuItem)
         
         #add SoftKey
-        softkeyitem = SoftKey()
-        softkeyitem.addSoftKey("Test Softkey One", "www.aastra.com")
-        softkeyitem.addSoftKey("Test Softkey Two", "www.aastra.com")
-        self.textmenu.addSoftKeys(softkeyitem)
+        softkeyitem = SoftKeyItem()
+        softkeyitem.addItem("Test Softkey One", "www.aastra.com")
+        softkeyitem.addItem("Test Softkey Two", "www.aastra.com")
+        self.textmenu.addSoftKeysItems(softkeyitem)
         
         
     def test_aastra_text_menu(self):
