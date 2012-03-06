@@ -6,9 +6,12 @@ Created on 01/03/2012
 from phonehub.aastra.items import ExecuteItem, MessageItem, inputItem,\
     LineItem, URIItem, MenuItem, IconItem, SoftKeyItem, ConfigurationItem
 class AastraIPPhoneBase():
+    
     root_name = None
     _content = ''
     _list_root_options = []
+    _softkeys = ""
+    _iconlist = ""
     
     def setDefaultIndex(self,val):
         self._list_root_options.append(' defaultIndex="%s"' % (val))
@@ -79,44 +82,56 @@ class AastraIPPhoneBase():
     def addSoftKeysItems(self,softkey_item):
         if isinstance(softkey_item, SoftKeyItem):
             for i in softkey_item.getItem():
-                self._content += i
+                self._softkeys += i
         else:
             raise TypeError, "SoftKey Item not a SoftKey() class Instance"
     def addIconListItems(self,icon):
         if isinstance(icon, IconItem):
-            self._content += '<IconList>'
+            self._iconlist = '<IconList>'
             for i in icon.getItem():
-                self._content += i
-            self._content += '</IconList>'
+                self._iconlist += i
+            self._iconlist += '</IconList>'
         else:
             raise TypeError, "Icon not a IconList() class Instance"
     
     def getXMLRender(self):
-        self._xmlRoot = '<%s' % (self.root_name)
+        xmlRoot = '<%s' % (self.root_name)
         for option in self._list_root_options:
-            self._xmlRoot += option
-        self._xmlRoot += '>'
-        self._xmlRoot += self._content
-        self._xmlRoot += '</%s>' % (self.root_name)
+            xmlRoot += option
+        xmlRoot += '>'
+        xmlRoot += self.getContent()
+        xmlRoot += '</%s>' % (self.root_name)
+        xmlRoot += self._softkeys
+        xmlRoot += self._iconlist
         del self._list_root_options[:]
-        return self._xmlRoot
+        return xmlRoot
+    
+    def getContent(self):
+        return self._content
     
 class AastraIPPhoneTextMenu(AastraIPPhoneBase):
+    _title = ""
+    _menuItem = ""
     
     def __init__(self):
         self.root_name = "AastraIPPhoneTextMenu"
         
     def addTitle(self,text,wrap="no"):
-        self._content += '<Title wrap="%s">%s</Title>' % (wrap,text)
+        self._title = '<Title wrap="%s">%s</Title>' % (wrap,text)
         
     def addMenuItems(self,item):
         if isinstance(item, MenuItem):
             for i in item.getItem():
-                self._content += i
+                self._menuItem += i
         else:
             raise TypeError, "Item not a MenuItem() class Instance"
+    def getContent(self):
+        self._content = self._title
+        self._content += self._menuItem
+        return self._content
              
 class AastraIPPhoneImageScreen(AastraIPPhoneBase):
+    
     def __init__(self):
         self.root_name = "AastraIPPhoneImageScreen"
         
@@ -133,6 +148,7 @@ class AastraIPPhoneImageScreen(AastraIPPhoneBase):
         self._content += '</Image>'
 
 class AastraIPPhoneImageMenu(AastraIPPhoneImageScreen):
+    
     def __init__(self):
         self.root_name = "AastraIPPhoneImageMenu"
         
@@ -147,41 +163,66 @@ class AastraIPPhoneImageMenu(AastraIPPhoneImageScreen):
             raise TypeError, "URI List not a URIList() class Instance"
         
 class AastraIPPhoneTextScreen(AastraIPPhoneBase):
+    _title = ""
+    _text = ""
     
     def __init__(self):
         self.root_name = "AastraIPPhoneTextScreen"
         
     def addTitle(self,text,wrap="no"):
-        self._content += '<Title wrap="%s">%s</Title>' % (wrap,text)
+        self._title += '<Title wrap="%s">%s</Title>' % (wrap,text)
                                                           
     def addText(self,text):
-        self._content += '<Text>%s</Text>' % (text)
+        self._text += '<Text>%s</Text>' % (text)
+    
+    def getContent(self):
+        self._content = self._title
+        self._content += self._text
+        return self._content
+        
 
 class AastraIPPhoneFormattedScreen(AastraIPPhoneBase):
+    _header = ""
+    _scroll = ""
+    _footer = ""
     
     def __init__(self):
         self.root_name = "AastraIPPhoneFormattedScreen"
         
-    def addLineItems(self,line):
+    def addHeaderLineItems(self,line):
         if isinstance(line,LineItem):
             for i in line.getItem():
-                self._content += i
+                self._header += i
+        else:
+            raise TypeError, "line not a Line() class Instance"
+        
+    def addFooterLineItems(self,line):
+        if isinstance(line,LineItem):
+            for i in line.getItem():
+                self._footer += i
         else:
             raise TypeError, "line not a Line() class Instance"
         
     def addScrollLineItems(self,line,height=None): 
         if isinstance(line,LineItem):
-            self._content += '<Scroll'
+            self._scroll += '<Scroll'
             if height != None:
-                self._content += ' Height="%s"'%(height)
-            self._content += '>'
+                self._scroll += ' Height="%s"'%(height)
+            self._scroll += '>'
             for i in line.getItem():
-                self._content += i
-            self._content += '</Scroll>'
+                self._scroll += i
+            self._scroll += '</Scroll>'
         else:
             raise TypeError, "line not a Line() class Instance"
+    
+    def getContent(self):
+        self._content = self._header
+        self._content += self._scroll
+        self._content += self._footer
+        return self._content
         
 class AastraIPPhoneInputScreen(AastraIPPhoneBase):
+    
     def __init__(self):
         self.root_name = "AastraIPPhoneInputScreen"
         
@@ -207,8 +248,15 @@ class AastraIPPhoneInputScreen(AastraIPPhoneBase):
         self._content += '<Default>%s</Default>'%(default)
                 
 class AastraIPPhoneMultiInputScreen(AastraIPPhoneBase):
-    def __init__(self):
+    
+    def __init__(self,prompt,URL,parameter,default,title=None):
         self.root_name = "AastraIPPhoneInputScreen"
+        if title != None:
+            self._content += '<Title>%s</Title>'%(title)
+        self._content += '<Prompt>%s</Prompt>'%(prompt)
+        self._content += '<URL>%s</URL>'%(URL)
+        self._content += '<Parameter>%s</Parameter>'%(parameter)
+        self._content += '<Default>%s</Default>'%(default)
     
     def setDisplayMode(self,val="normal"):
         if val != "normal":
@@ -230,6 +278,7 @@ class AastraIPPhoneMultiInputScreen(AastraIPPhoneBase):
                 self._content += i
 
 class AastraIPPhoneStatus(AastraIPPhoneBase):
+    
     def __init__(self):
         self.root_name = "AastraIPPhoneStatus"
         
@@ -263,6 +312,7 @@ class AastraIPPhoneExecute(AastraIPPhoneBase):
             raise TypeError, "Item Execute Variable not a ExecuteItem() class Instance"
 
 class AastraIPPhoneConfiguration(AastraIPPhoneBase):
+    
     def __init__(self):
         self.root_name = "AastraIPPhoneConfiguration"
         

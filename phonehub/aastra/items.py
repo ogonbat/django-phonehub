@@ -1,10 +1,9 @@
 '''
 Created on 05/03/2012
 
-@author: amucci
+@author: ogonbat
 '''
 class ConfigurationItem():
-    
     _configuration_list = []
     
     def addItem(self,paramenter,value,setType="remote"):
@@ -22,7 +21,6 @@ class ConfigurationItem():
         del self._configuration_list[:]
             
 class ExecuteItem():
-    
     _execute_list = []
     
     def addItem(self,URI=None,interruptCall=None):
@@ -61,8 +59,8 @@ class MessageItem():
         for i in self._message_list:
             yield i
         del self._message_list[:]
+        
 class inputItem():
-    
     _input_list = []
     
     def addItem(self,prompt=None,parameter=None,default=None,selection=None,typeMode="string",is_password="no",editable="yes",softkey=None):
@@ -99,7 +97,6 @@ class inputItem():
         del self._input_list[:]
 
 class SoftKeyItem():
-    
     _softkey_list = []
     
     def addItem(self,label,URI,index,icon_index=None):
