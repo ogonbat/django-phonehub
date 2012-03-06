@@ -1,2 +1,6 @@
 .project
 .pydevproject
+MANIFEST
+MANIFEST.in
+dist/*
+
