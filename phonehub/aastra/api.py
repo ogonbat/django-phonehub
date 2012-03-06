@@ -3,7 +3,7 @@ Created on 01/03/2012
 
 @author: ogonbat
 '''
-from django_phonehub.aastra.items import ExecuteItem, MessageItem, inputItem,\
+from phonehub.aastra.items import ExecuteItem, MessageItem, inputItem,\
     LineItem, URIItem, MenuItem, IconItem, SoftKeyItem, ConfigurationItem
 class AastraIPPhoneBase():
     
