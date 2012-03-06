@@ -6,10 +6,9 @@ Created on 01/03/2012
 from phonehub.aastra.items import ExecuteItem, MessageItem, inputItem,\
     LineItem, URIItem, MenuItem, IconItem, SoftKeyItem, ConfigurationItem
 class AastraIPPhoneBase():
-    
     root_name = None
     _content = ''
-    _list_root_options =[]
+    _list_root_options = []
     
     def setDefaultIndex(self,val):
         self._list_root_options.append(' defaultIndex="%s"' % (val))
@@ -99,6 +98,7 @@ class AastraIPPhoneBase():
         self._xmlRoot += '>'
         self._xmlRoot += self._content
         self._xmlRoot += '</%s>' % (self.root_name)
+        del self._list_root_options[:]
         return self._xmlRoot
     
 class AastraIPPhoneTextMenu(AastraIPPhoneBase):

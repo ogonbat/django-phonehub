@@ -15,11 +15,11 @@ class ConfigurationItem():
         content += '<Parameter>%s</Parameter>'%(paramenter)
         content += '<Value>%s</Value>'%(value)
         content += '</ConfigurationItem>'
-        self._configuration_list.append(content)
-    
+        self._configuration_list.append(content)    
     def getItem(self):
         for i in self._configuration_list:
             yield i
+        del self._configuration_list[:]
             
 class ExecuteItem():
     
@@ -34,10 +34,11 @@ class ExecuteItem():
             content += ' interruptCall="%s"'%(interruptCall)
         content += ' />'
         self._execute_list.append(content)
-    
+        
     def getItem(self):
         for i in self._execute_list:
             yield i
+        del self._execute_list[:]
 
 class MessageItem():
     
@@ -59,6 +60,7 @@ class MessageItem():
     def getItem(self):
         for i in self._message_list:
             yield i
+        del self._message_list[:]
 class inputItem():
     
     _input_list = []
@@ -94,6 +96,7 @@ class inputItem():
     def getItem(self):
         for i in self._input_list:
             yield i
+        del self._input_list[:]
 
 class SoftKeyItem():
     
@@ -114,6 +117,7 @@ class SoftKeyItem():
     def getItem(self):
         for i in self._softkey_list:
             yield i
+        del self._softkey_list[:]
 
 class MenuItem():
     
@@ -133,6 +137,7 @@ class MenuItem():
     def getItem(self):
         for item in self._items_list:
             yield item
+        del self._items_list[:]
 
 class _MenuItem():
     
@@ -164,6 +169,7 @@ class IconItem():
     def getItem(self):
         for i in self._icons_list:
             yield i
+        del self._icons_list[:]
 
 class URIItem():
     _items_list = []
@@ -184,6 +190,7 @@ class URIItem():
     def getItem(self):
         for item in self._items_list:
             yield item
+        del self._items_list[:]
             
 class _UrlItem():
     
@@ -213,3 +220,4 @@ class LineItem():
     def getItem(self):
         for i in self._line_list:
             yield i
+        del self._line_list[:]
