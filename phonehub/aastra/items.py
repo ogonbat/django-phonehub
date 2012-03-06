@@ -102,7 +102,7 @@ class SoftKeyItem():
     
     _softkey_list = []
     
-    def addItem(self,label,URI,index=None,icon_index=None):
+    def addItem(self,label,URI,index,icon_index=None):
         self._content = '<SoftKey'
         if index != None:
             self._content += ' index="%s"'%(index)
