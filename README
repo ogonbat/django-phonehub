@@ -1,5 +1,6 @@
 Django-phonehub
 ===============
 
-###Documentation
-> Coming Soon
+###Installation
+
+pip install django-phonehub
