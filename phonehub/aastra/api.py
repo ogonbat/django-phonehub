@@ -1,7 +1,7 @@
 '''
 Created on 01/03/2012
 
-@author: ogonbat
+@author: cingusoft
 '''
 from phonehub.aastra.items import ExecuteItem, MessageItem, inputItem,\
     LineItem, URIItem, MenuItem, IconItem, SoftKeyItem, ConfigurationItem

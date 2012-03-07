@@ -1,7 +1,7 @@
 '''
 Created on 05/03/2012
 
-@author: ogonbat
+@author: cingusoft
 '''
 class ConfigurationItem():
     _configuration_list = []
