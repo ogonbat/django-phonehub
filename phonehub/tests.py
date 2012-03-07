@@ -4,8 +4,7 @@ Created on 04/03/2012
 @author: ogonbat
 '''
 import unittest
-from phonehub.aastra.api import AastraIPPhoneTextMenu, MenuItem 
-from phonehub.aastra.items import SoftKeyItem
+from sipxmldevices.aastra.api import AastraIPPhoneTextMenu, MenuItem, SoftKeyItem
 class PhoneHubTestCase(unittest.TestCase):
     def setUp(self):
         self.textmenu = AastraIPPhoneTextMenu()

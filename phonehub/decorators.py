@@ -14,6 +14,6 @@ def is_aastra(view):
         if "Aastra" in partial_agent[0]:
             pass
         else:
-            return HttpResponseRedirect(settings.LOGIN_URL)
+            return HttpResponseRedirect('settings.LOGIN_URL')
         return view(request,*args,**kwargs)
     return inner

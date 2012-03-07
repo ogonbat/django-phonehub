@@ -3,12 +3,13 @@ from distutils.core import setup
 setup(
     name = "phonehub",
     packages = ["phonehub"],
-    version = "1.0.0",
+    version = "1.0.1",
     description = "django-phonehub is a django app for simple and fast Aastra phones xml creation",
     author = "Andrea Mucci",
     author_email = "cingusoft@gmail.com",
     url = "https://github.com/ogonbat/django-phonehub",
     keywords = ["aastra", "sip", "xml", "django"],
+    requires = ['sipxmldevices'],
     classifiers = [
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
